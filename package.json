@@ -1,0 +1,32 @@
+{
+  "name": "fs-reverse",
+  "version": "0.0.0",
+  "description": "stream the lines of a file in reverse order!",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "event-stream": "~2.1.8",
+    "stream-tester": "~0.0.2",
+    "through": "~0.1.2",
+    "from": "~0.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dominictarr/fs-reverse.git"
+  },
+  "keywords": [
+    "stream",
+    "streaming",
+    "reverse",
+    "file",
+    "read"
+  ],
+  "author": "Dominic Tarr <dominic.tarr@gmail.com> (dominictarr.com)",
+  "license": "BSD"
+}
