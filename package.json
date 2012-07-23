@@ -7,12 +7,12 @@
     "test": "test"
   },
   "dependencies": {
-    "event-stream": "~2.1.8",
-    "stream-tester": "~0.0.2",
-    "through": "~0.1.2",
     "from": "~0.0.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "through": "~0.1.2",
+    "event-stream": "~2.1.8"
+  },
   "scripts": {
     "test": "node test/index.js"
   },
