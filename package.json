@@ -1,6 +1,6 @@
 {
   "name": "fs-reverse",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "stream the lines of a file in reverse order!",
   "main": "index.js",
   "directories": {
