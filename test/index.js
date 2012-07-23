@@ -8,7 +8,7 @@ var actual = []
 var assert = require('assert')
 
 from(function (i) {
-    if(i > 100) return this.emit('end')
+    if(i > 1000) return this.emit('end')
     this.emit('data', i + ' -- MAKE THE LINE LONGER.......' + new Date())
     return true
   })
@@ -18,9 +18,9 @@ from(function (i) {
   .pipe(es.stringify())
   .pipe(fs.createWriteStream('/tmp/read-this-reverse'))
   .on('close', function () {    
-    fsr('/tmp/read-this-reverse') 
-      .pipe(es.log('>>'))
+    fsr('/tmp/read-this-reverse', {bufferSize: 1024}) 
       .pipe(es.parse())
+      .pipe(es.log('>>'))
       .pipe(through().on('data', function (data) {
         actual.push(data)
       }))
