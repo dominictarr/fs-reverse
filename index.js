@@ -7,7 +7,7 @@ module.exports = function (file, opts) {
   var bufferSize = opts && opts.bufferSize || 1024 * 64
   var mode = opts && opts.mode || 438 // 0666
   var flags = opts && opts.flags || 'r'
-
+  
   function onError (err) {
     stream.emit('error', err)
     stream.destroy()
@@ -18,8 +18,7 @@ module.exports = function (file, opts) {
   if(!/rx?/.test(flags)) throw new Error("only flags 'r' and 'rx' are allowed")
 
   stream = from(function (i, next) {
-    if(position === 0)
-      return stream.emit('data', soFar), stream.emit('end')
+    if(stream.destroyed) return
     if(i === 0) {
       var c = 2
       fs.stat(file, function (err, _stat) {
@@ -37,6 +36,7 @@ module.exports = function (file, opts) {
     } else read()
 
     function read () {
+      if(stream.destroyed) return
       var length = Math.min(bufferSize, position)
       var b = new Buffer(length)
       position = position - length
@@ -63,14 +63,16 @@ module.exports = function (file, opts) {
     if(stream.destroyed) return
     stream.readable = false
     stream.destroyed = true
+    stream.ended = true
     function close () {
       fs.close(fd, function (err) {
         if(err) onError(err)
         stream.emit('close')
       })
     }
-    if(!fd) stream.once('open', close)
-    else close() 
+    if(!stream.started) return stream.emit('close')//allow for destroy on first tick.
+    if(!fd) stream.once('open', close) //destroy before file opens.
+    else close()  //any other situation.
   }
   return stream
 }
