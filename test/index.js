@@ -2,6 +2,8 @@ var from = require('from')
 var es = require('event-stream')
 var through = require('through')
 var fs = require('fs')
+var spec = require('stream-spec')
+
 var fsr = require('..')
 var expected = []
 var actual = []
@@ -17,8 +19,12 @@ from(function (i) {
   }))
   .pipe(es.stringify())
   .pipe(fs.createWriteStream('/tmp/read-this-reverse'))
-  .on('close', function () {    
-    fsr('/tmp/read-this-reverse', {bufferSize: 1024}) 
+  .on('close', function () {
+
+    var reverse = fsr('/tmp/read-this-reverse', {bufferSize: 1024})
+    spec(reverse).readable().validateOnExit()
+
+    reverse
       .pipe(es.parse())
       .pipe(es.log('>>'))
       .pipe(through().on('data', function (data) {
