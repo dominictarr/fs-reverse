@@ -10,7 +10,6 @@ module.exports = function (file, matcher) {
   }
   var stat, fd, position
   return stream = from(function (i, next) {
-    console.log(position)
     if(position === 0)
       return stream.emit('data', soFar), stream.emit('end')
     if(i === 0) {
@@ -30,7 +29,6 @@ module.exports = function (file, matcher) {
 
     function read () {
       var length = position > stat.blksize ? stat.blksize : position
-      console.log('length:', length, 'position:', position, 'size:', stat.size)
       var b = new Buffer(length)
       position = position - length
       fs.read(fd, b, 0, length, position, function (err) {
@@ -45,7 +43,6 @@ module.exports = function (file, matcher) {
     function data (buffer) {
       soFar = buffer + soFar
       var array = soFar.split(matcher)
-      console.log(array)
       soFar = array.shift()
       while(array.length) 
         stream.emit('data', array.pop())
