@@ -7,14 +7,15 @@
     "test": "test"
   },
   "dependencies": {
-    "from": "~0.0.2"
+    "from": "~0.1"
   },
   "devDependencies": {
     "through": "~0.1.2",
-    "event-stream": "~2.1.8"
+    "event-stream": "~2.1.8",
+    "stream-spec": "~0.3.0"
   },
   "scripts": {
-    "test": "node test/index.js"
+    "test": "node test/index.js && node test/destroy.js"
   },
   "repository": {
     "type": "git",
