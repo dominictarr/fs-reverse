@@ -1,15 +1,23 @@
 var fs = require('fs')
 var from = require('from')
 
-module.exports = function (file, matcher) {
+module.exports = function (file, opts) {
   var stream, soFar = ''
-  matcher = matcher || '\n'
+  var matcher = opts && opts.matcher || '\n'
+  var bufferSize = opts && opts.bufferSize || 1024 * 64
+  var mode = opts && opts.mode || 438 // 0666
+  var flags = opts && opts.flags || 'r'
+
   function onError (err) {
     stream.emit('error', err)
     stream.destroy()
   }
+
   var stat, fd, position
-  return stream = from(function (i, next) {
+
+  if(!/rx?/.test(flags)) throw new Error("only flags 'r' and 'rx' are allowed")
+
+  stream = from(function (i, next) {
     if(position === 0)
       return stream.emit('data', soFar), stream.emit('end')
     if(i === 0) {
@@ -20,15 +28,16 @@ module.exports = function (file, matcher) {
         position = stat.size
         if(!--c) read()
       })
-      fs.open(file, 'r', function (err, _fd) {
+      fs.open(file, flags, mode, function (err, _fd) {
         fd = _fd
+        stream.emit('open')
         if(!--c) read()
       })
 
     } else read()
 
     function read () {
-      var length = position > stat.blksize ? stat.blksize : position
+      var length = Math.min(bufferSize, position)
       var b = new Buffer(length)
       position = position - length
       fs.read(fd, b, 0, length, position, function (err) {
@@ -37,6 +46,7 @@ module.exports = function (file, matcher) {
         if(position > 0) return next()
         stream.emit('data', soFar)
         stream.emit('end')
+        stream.destroy()
       })
     }
 
@@ -48,4 +58,19 @@ module.exports = function (file, matcher) {
         stream.emit('data', array.pop())
     }
   })
+
+  stream.destroy = function () {
+    if(stream.destroyed) return
+    stream.readable = false
+    stream.destroyed = true
+    function close () {
+      fs.close(fd, function (err) {
+        if(err) onError(err)
+        stream.emit('close')
+      })
+    }
+    if(!fd) stream.once('open', close)
+    else close() 
+  }
+  return stream
 }
