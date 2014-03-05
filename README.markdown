@@ -3,10 +3,12 @@
 read a file backwards.
 
 ``` js
+// Usage: node <thissnippet.js> <filename>
 var fsR = require('fs-reverse')
+  , filename = process.argv[2]
 
-fsR(filename, opts)
-  .pipe(writableStream)
+fsR(filename, {})
+  .pipe(process.stdout)
 ```
 
 the file will be read from the tail end, split into lines, and emitted in reverse order.
