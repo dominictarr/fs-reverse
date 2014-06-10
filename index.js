@@ -66,7 +66,7 @@ module.exports = function (file, opts) {
     stream.ended = true
     function close () {
       if(!fd)
-        return
+        return stream.emit('close')
       fs.close(fd, function (err) {
         if(err) onError(err)
         stream.emit('close')
