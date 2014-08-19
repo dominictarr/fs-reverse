@@ -40,12 +40,14 @@ module.exports = function (file, opts) {
       var length = Math.min(bufferSize, position)
       var b = new Buffer(length)
       position = position - length
-      if(position <= 0){
+
+      if(length <= 0){
         stream.emit('data', soFar)
         stream.emit('end')
         stream.destroy()
         return
       }
+
       fs.read(fd, b, 0, length, position, function (err) {
         if(err) return onError(err)
         data(b)
