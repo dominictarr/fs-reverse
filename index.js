@@ -27,11 +27,17 @@ module.exports = function (file, opts) {
         position = stat.size
         if(!--c) read()
       })
-      fs.open(file, flags, mode, function (err, _fd) {
-        fd = _fd
+      if (typeof opts.fd === 'number') {
+        fd = opts.fd
         stream.emit('open')
         if(!--c) read()
-      })
+      } else {
+        fs.open(file, flags, mode, function (err, _fd) {
+          fd = _fd
+          stream.emit('open')
+          if(!--c) read()
+        })
+      }
 
     } else read()
 
@@ -65,10 +71,12 @@ module.exports = function (file, opts) {
     stream.destroyed = true
     stream.ended = true
     function close () {
-      fs.close(fd, function (err) {
-        if(err) onError(err)
-        stream.emit('close')
-      })
+      if (typeof opts.fd !== 'number') {
+        fs.close(fd, function (err) {
+          if(err) onError(err)
+          stream.emit('close')
+        })
+      }
     }
     if(!stream.started) return stream.emit('close')//allow for destroy on first tick.
     if(!fd) stream.once('open', close) //destroy before file opens.
