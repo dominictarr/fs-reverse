@@ -7,7 +7,7 @@ module.exports = function (file, opts) {
   var bufferSize = opts && opts.bufferSize || 1024 * 64
   var mode = opts && opts.mode || 438 // 0666
   var flags = opts && opts.flags || 'r'
-  
+
   function onError (err) {
     stream.emit('error', err)
     stream.destroy()
@@ -54,8 +54,10 @@ module.exports = function (file, opts) {
       soFar = buffer + soFar
       var array = soFar.split(matcher)
       soFar = array.shift()
-      while(array.length) 
+      while(array.length) {
+        if(stream.destroyed) return
         stream.emit('data', array.pop())
+      }
     }
   })
 
