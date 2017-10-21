@@ -1,6 +1,6 @@
 {
   "name": "fs-reverse",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "stream the lines of a file in reverse order!",
   "main": "index.js",
   "directories": {
@@ -29,5 +29,8 @@
     "read"
   ],
   "author": "Dominic Tarr <dominic.tarr@gmail.com> (dominictarr.com)",
-  "license": ["MIT", "Apache2"]
+  "license": [
+    "MIT",
+    "Apache2"
+  ]
 }
