@@ -28,6 +28,7 @@ module.exports = function (file, opts) {
         if(!--c) read()
       })
       fs.open(file, flags, mode, function (err, _fd) {
+        if(err) return onError(err)
         fd = _fd
         stream.emit('open')
         if(!--c) read()
